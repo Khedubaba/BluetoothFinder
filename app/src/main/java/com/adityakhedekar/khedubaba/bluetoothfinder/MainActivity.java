@@ -1,13 +1,21 @@
 package com.adityakhedekar.khedubaba.bluetoothfinder;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +36,34 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter mArrayAdapter;
     ArrayList<String> mAddresses = new ArrayList<>();
     BluetoothAdapter mBluetoothAdapter;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == 1){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    mStatusTetView.setText("");
+                    mSearchButton.setEnabled(true);
+                }
+            }
+            else{
+                mStatusTetView.setText("");
+                mSearchButton.setEnabled(true);
+            }
+        }
+        else{
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                mStatusTetView.setText("");
+                mSearchButton.setEnabled(true);
+            }
+            else{
+                mStatusTetView.setText("Please allow location access to locate near by bluetooth devices");
+                mSearchButton.setEnabled(false);
+            }
+        }
+    }
 
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -80,6 +116,24 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(mBroadcastReceiver, intentFilter);
+
+
+        if (Build.VERSION.SDK_INT <=23) {
+
+        }
+        else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
+                mStatusTetView.setText("Please allow location access to locate near by bluetooth devices");
+                mSearchButton.setEnabled(false);
+            }
+            else{
+                mStatusTetView.setText("");
+                mSearchButton.setEnabled(true);
+            }
+        }
+
+
     }
 
     public void searchButtonClicked (View view){
@@ -89,4 +143,5 @@ public class MainActivity extends AppCompatActivity {
         mAddresses.clear();
         mBluetoothAdapter.startDiscovery();
     }
+
 }
