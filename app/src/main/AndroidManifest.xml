@@ -3,6 +3,7 @@
     package="com.adityakhedekar.khedubaba.bluetoothfinder">
 
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
 
     <application
         android:allowBackup="true"
