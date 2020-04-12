@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             String action = intent.getAction();
             Log.i(TAG, "Action: " + action);
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-                mStatusTetView.setText("Finished");
+                mStatusTetView.setText("Finished Searching");
                 mSearchButton.setEnabled(true);
             }
             else if(BluetoothDevice.ACTION_FOUND.equals(action)){
